@@ -1,4 +1,4 @@
--INCLUDE IBFS:/WFC/Repository/Public/system/plugins/jwfselect2/settings_jwfselect2.fex
+-INCLUDE IBFS:/WFC/Repository/public/plugins/jwfselect2/settings_jwfselect2.fex
 -RUN
 -SET &ECHO=ALL;
 -SET &AUX_QUOTED = IF &JWF_COD_IS_NUM.QUOTEDSTRING EQ 'TRUE' THEN '' ELSE '.QUOTEDSTRING';

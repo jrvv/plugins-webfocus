@@ -1,0 +1,283 @@
+/* Introducir aquí código JS incrustado */
+
+/*
+iba_pageloading
+event:iba_pageloaded. The page is loaded in the running state.
+event:iba_beforecontentdescribe. Before the page content filtering information has been retrieved.
+event:iba_contentdescribed. After the page content filtering information has been retrieved, but before it has been processed.
+event:iba_beforecontentload. Before the content of a panel is about to load.
+*/
+
+(function (win, $, obj) {
+    var $deferred = $.Deferred(),
+        pd_jsLocation = "/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_LAUNCH&BIP_folder=IBFS:/WFC/Repository/Public/system/API_JS_framework/&BIP_item=pdjs.js";
+    $.getScript(pd_jsLocation, function () {
+        $pd.facilities.plugins("jwfselect2", $deferred);
+    });
+
+    var _pageId = obj.sm._page[0].dataset.ibxpSsId,
+        $page = $('div[data-ibxp-ss-id="' + _pageId + '"]');
+
+    function $PD(selection) {
+        return $page.find(selection);
+    }
+    /*
+        $pdPage.get(0).addEventListener("iba_beforecontentload", function(e){
+                        var page = $(e.target),
+                            pageUtil = PageUtil.getPageUtil(page),
+                            amperManager = pageUtil.getAmperManager();
+                        filterValues = {};
+                        amperManager._ampers.forEach(function (amper){
+                            if (amper.bound){
+                                if (amper.info.saveDefValue){
+    */
+    function loading(e) {
+        var page = e.target;
+        waitPDJS(function () {
+            $pd.onCreateDaemon('div[data-ibxp-ss-id="FILTERPANEL-L1ND7N851BRD4Q03K3389"] > [data-ibx-type="ibxAmperRadioGroup"]', 'div[data-ibxp-ss-id="FILTERPANEL-L1ND6XYD1LWKEUSSX111"] > [data-ibx-type="ibxAmperRadioGroup"]', '.filter_customers', function () {
+                _hideFiltersOnSubmit();
+                _checkedUp();
+
+                createSelect2Customers(
+                    page,
+                    "filter_customers",
+                    "customerFilter",
+                    "CIF, nombre o código",
+                    "All"
+                )
+            });
+        });
+        /* $.when(_waitObjects('div[data-ibxp-ss-id="FILTERPANEL-L1ND7N851BRD4Q03K3389"]', 'div[data-ibxp-ss-id="FILTERPANEL-L1ND6XYD1LWKEUSSX111"]')).done(function(data){
+             _hideFiltersOnSubmit();
+             _checkedUp();
+            
+         });*/
+        win.removeEventListener("iba_pageloaded", loading);
+    }
+    win.addEventListener("iba_pageloaded", loading);
+
+    function _hideFiltersOnSubmit() {
+        var _section = 'SECTION-L1BTJ8QT1LYO4WRD0732';
+        $page.on('click', 'div.pd-amper-submit[data-ibx-type="ibxButton"]', function () {
+            if ($PD('div.pd-page-acc-section.ACC-' + _section + ' div.ibx-accordion-page-button').attr('aria-expanded') == 'true') {
+                $PD('div.pd-page-acc-section.ACC-' + _section + ' div.ibx-accordion-page-button div:first').trigger('click');
+            }
+        });
+    }
+
+    function _checkedUp() {
+        $('div[data-ibx-type="pdFilterPanel"]').filter(function (i) {
+            var pdFilterPanel = this,
+                pdFilterPanel = $PD(pdFilterPanel),
+                _return = false;
+            if (pdFilterPanel.find('div[data-ibx-type="ibxAmperRadioGroup"]').length > 0) _return = true;
+            return _return;
+        }).each(function (i) {
+            var pdFilterPanel = this;
+            _reOrderCheckedsUp(pdFilterPanel);
+        });
+
+        $PD('div[data-ibx-type="ibxAmperRadioGroup"] div[data-ibx-type="ibxCheckBoxSimple"]').click(function () {
+            var $check = $PD(this);
+            _moveOptionUp(this);
+        });
+    }
+
+    function _moveOptionUp(option) {
+        var $option = $PD(option);
+        if ($option.attr('aria-checked') == "true") {
+            $option.attr('moving', true);
+            $option.parent().find('div[data-ibx-type="ibxCheckBoxSimple"][moving!=true][aria-checked="true"]:last').after(option);
+            $option.removeAttr('moving');
+        } else {
+            _reOrderCheckedsUp($option.closest('div[data-ibx-type="pdFilterPanel"]').get())
+        }
+    }
+
+    function _reOrderCheckedsUp(obj) {
+        var $obj = $PD(obj);
+        $($obj.find('div[data-ibx-type="ibxCheckBoxSimple"]').get().reverse()).each(function () {
+            var _option = this,
+                $option = $PD(_option);
+            if ($option.attr('aria-checked') == "true") $option.parent().prepend(_option);
+        });
+    }
+
+    function _daemonCtrlChange() {
+        var _interval = setInterval(_objectsCtrlChange, 1000);
+    }
+    function _objectsCtrlChange() {
+        var _amperManager = PageUtil.getPageUtil($page.get()).getAmperManager(),
+            _ampers = _amperManager._ampers;
+        _ampers.forEach(function (amper) {
+            var _ctrlChanged = false,
+                _info = amper.info;
+            //            if (amper.control.attr('data-ibxp-ss-id') == "FILTERPANEL-L1ND6XYD1LWKEUSSX111") debugger
+            if (amper.bound) {
+                if (Array.isArray(amper.info.curValue)) {
+                    if (_info.curValue.length == _info.defValue.length) {
+                        for (var i = 0; i < _info.curValue.length; i++) {
+                            if (_info.defValue.indexOf(_info.curValue[i]) == -1) {
+                                _ctrlChanged = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        _ctrlChanged = true;
+                    }
+                } else {
+                    if (_info.curValue != _info.defValue) _ctrlChanged = true;
+                }
+                if (_ctrlChanged) amper.control.addClass('ctrlChanged');
+                else amper.control.removeClass('ctrlChanged');
+            }
+        });
+    }
+
+    /*	function _waitObjects(){
+            var $d = $.Deferred(),
+                _objects = arguments;
+            function _recursiveSearch(){
+                var _areObject = true;
+                for (var i = 0; i < _objects.length; i++) if ($PD(_objects[i]).length == 0) _areObject = false;
+                if (_areObject) $d.resolve();
+                else setTimeout(_recursiveSearch, 1000);
+            }
+            _recursiveSearch();
+            return $d.promise();
+        }*/
+    function waitPDJS(callBack) {
+        $deferred.promise().then(function () {
+            if (callBack) callBack();
+        })
+    }
+})(window, jQuery, this);
+
+function selectFromFile(options) {
+    debugger
+    var $WFObject = $(options.WFObject),
+        $filterPanel = $WFObject.closest('[data-ibx-type="pdFilterPanel"]'),
+        ibxTextField = $filterPanel.find(".ibx-text-field").data().ibiIbxTextField,
+        $select2 = null,
+        $inputField = null;
+
+    function createTemplate() {
+        var template = `
+                    <div style="display:flex;width:100%;align-items:stretch">
+                        <div style="flex-grow: 1;">
+                            <select id=mySelect2 style=width:100%></select>
+                        </div>
+                        <div>
+                            <div class="file-upload-wrapper">
+                                <input id="input-file" name="file-upload-field" type="file" class="file-upload-field" value="">
+                            </div>
+                        </div>
+                      
+                    </div>`;
+        $filterPanel.find(".pd-filter-panel-content").append($(template));
+        $inputField = $filterPanel.find("#input-file");
+    }
+    function createSelect2() {
+        $select2 = $filterPanel.find("#mySelect2").select2({
+            placeholder: "All",
+            allowClear: true,
+            multiple: true,
+            tags: true,
+
+        });
+        $select2.on("change", function (e) {
+            var selectedData = $(this).select2("data"),
+                selectedString = "";
+            selectedData.forEach(function (element, index) {
+                if (index == 0) selectedString += "'" + element.id + "'";
+                else selectedString += " OR '" + element.id + "'";
+            });
+            ibxTextField.value(selectedString);
+        });
+    }
+    function addOptions(options) {
+        var noExistOptions = options.filter((element) => {
+            if ($select2.find('option[value="' + element.id + '"').length == 0) return true;
+            else {
+                $select2.find('option[value="' + element.id + '"').prop("selected", "selected");
+                return false;
+            }
+        });
+        $select2.append(
+            $.map(noExistOptions, function (element, i) {
+                return $("<option>", { val: element.id, text: element.id, selected: "selected" });
+            })
+        );
+    }
+    function readInput(file) {
+        readFileContent(file)
+            .then((content) => {
+                console.log(content);
+                var options = content
+                    .split("\r\n")
+                    .filter((element) => element !== "")
+                    .map((s) => {
+                        var element = s.replace(/"/gi, "").trim();
+                        return { id: element, text: element };
+                    });
+                addOptions(options);
+                $inputField.prop("value", "");
+                $select2.trigger("change");
+            })
+            .catch((error) => console.log(error));
+    }
+    function readFileContent(file) {
+        var reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onload = (event) => resolve(event.target.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsText(file);
+        });
+    }
+    createTemplate();
+    createSelect2();
+    if (!options.debug_mode) {
+        $WFObject.parent().hide();
+    }
+    $inputField.change(function (event) {
+        var input = event.target;
+        if ("files" in input && input.files.length > 0) {
+            readInput(input.files[0]);
+        }
+    });
+}
+
+function createSelect2Customers(page, target, id, title, placeholder) {
+
+    $pd.facilities.createJwfSelect2({
+        page: page,
+        debug_mode: false,
+        id: "jwfselect2_" + id,
+        target_text: $("." + target),
+        width: "60%",
+        title: title,
+        placeholder: placeholder,
+        allowClear: true,
+        language: 'es_ES',
+        fex_ajax: "ajax_get_customers",
+        order_by: "",
+        repository: "JDE/Hidden_Content/",
+        onClose: function (a) {
+            var count = $('#' + this.id).select2('data').length;
+            var title = '';
+            var selected = $('#' + this.id).select2('data').forEach(function (selectedElement, index) {
+                title = title + selectedElement.text + ' &#xA;';
+            });
+
+
+            console.log(a)
+            var templateSelected = '<li title="' + title + '"class="select2-selection__choice numberSelected">' + count + ' Cliente Seleccionado</li>';
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered .numberSelected').remove();
+            if (count == 0) return;
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered .select2-selection__choice').hide();
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered').prepend($(templateSelected))
+        }
+    });
+
+
+}

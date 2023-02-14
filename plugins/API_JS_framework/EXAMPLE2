@@ -1,0 +1,80 @@
+/* Uncomment the code below and add your custom js code */
+
+(function (pageEl) {
+
+    var $deferred = $.Deferred(),
+        pd_jsLocation = "/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_LAUNCH&BIP_folder=IBFS:/WFC/Repository/public/plugins/API_JS_framework/&BIP_item=pdjs.js";
+    $.getScript(pd_jsLocation, function () {
+        $pd.facilities.plugins("jwfselect2", $deferred);
+    });
+    function waitPDJS(callBack) {
+        $deferred.promise().then(function () {
+            if (callBack) callBack();
+        })
+    }
+
+    // Callback for event triggered when the page starts loading    
+    pageEl.addEventListener("iba_pageloading", function (e) {
+        // Automation page object - see doc: /<app_path>/web_resource/doc/automation/index.html
+        var page = e.data;
+        console.log(`page loading: ${$(page.element()).ibxWidget('option', 'ssId')}`);
+    });
+
+    // Callback for event triggered when the page is fully loaded
+    pageEl.addEventListener("iba_contentdescribed", function (e) {
+        // Automation page object
+        var page = e.data;
+        waitPDJS(function () {
+            createSelect2Customers(
+                page,
+                "filter_customers",
+                "customerFilter",
+                "CIF, nombre o código",
+                "All"
+            )
+        });
+
+        console.log(`page loaded: ${$(page.element()).ibxWidget('option', 'ssId')}`);
+    });
+
+
+})(window.currentPageEl)
+
+// /**
+// * Add global variables and functions here
+// * Note: If this page is going to run in a portal, global definitions from this page might conflict with global definitions from other pages.
+// */
+function createSelect2Customers(page, target, id, title, placeholder) {
+
+    $pd.facilities.createJwfSelect2({
+        page: page,
+        debug_mode: false,
+        id: "jwfselect2_" + id,
+        target_text: $("." + target),
+        width: "60%",
+        title: title,
+        placeholder: placeholder,
+        allowClear: true,
+        language: 'es_ES',
+        fex_ajax: "ajax_get_customers",
+        order_by: "",
+        repository: "JDE/Hidden_Content/",
+        onClose: function (a) {
+            var count = $('#' + this.id).select2('data').length;
+            var title = '';
+            var selected = $('#' + this.id).select2('data').forEach(function (selectedElement, index) {
+                title = title + selectedElement.text + ' &#xA;';
+            });
+
+
+            console.log(a)
+            var templateSelected = '<li title="' + title + '"class="select2-selection__choice numberSelected">' + count + ' Cliente Seleccionado</li>';
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered .numberSelected').remove();
+            if (count == 0) return;
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered .select2-selection__choice').hide();
+            $('#' + this.id).siblings('span.select2').find('ul.select2-selection__rendered').prepend($(templateSelected))
+        }
+    });
+
+
+}

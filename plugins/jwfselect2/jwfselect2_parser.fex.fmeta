@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <rootObject _jt="IBFSMRObject" binary="false" defaultLng="en_US" dummy="false" expireDate="0" length="0" type="FexFile">
-    <properties size="1">
+    <properties size="2">
+        <entry key="LastDescribed" value="1676366375199"/>
         <entry key="tool" value="editor"/>
     </properties>
-    <extendedProperties _jt="HashMap" loadFactor="0.75" threshold="0"/>
     <nlsValues _jt="HashMap" loadFactor="0.75" threshold="12">
         <entry>
             <key _jt="string" value="en_US"/>
@@ -12,4 +12,88 @@
             </value>
         </entry>
     </nlsValues>
+    <fexParameters _jt="ArrayList" size="7">
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="JWF_COD_IS_NUM" index="0" multiselect="false" parent="" parmname="JWF_COD_IS_NUM" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="18" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="JWF_COD_IS_NUM" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="12">
+                    <entry>
+                        <key _jt="string" value="quotedstring"/>
+                        <value _jt="string" value="YES"/>
+                    </entry>
+                </parameters>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="JWF_MAST" index="1" multiselect="false" parent="" parmname="JWF_MAST" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="21" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="JWF_MAST" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="JWF_COD" index="2" multiselect="false" parent="" parmname="JWF_COD" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="22" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="JWF_COD" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="JWF_DEPENDENCY" index="3" multiselect="false" parent="" parmname="JWF_DEPENDENCY" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="24" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="JWF_DEPENDENCY" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="DEPENDENCY" index="4" multiselect="false" parent="" parmname="DEPENDENCY" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="25" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="DEPENDENCY" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="OPT_SEL" index="5" multiselect="false" parent="" parmname="OPT_SEL" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="26" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="OPT_SEL" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+        <item _jt="IBRFexParameter" amperFormat="" datadomain="JWF_DESC" index="6" multiselect="false" parent="" parmname="JWF_DESC" required="true">
+            <amperVarType class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+            <amperVar aggType="" amperIdx="27" chainIdx="-1" class="com.ibi.wfrs.IBFSWFDescribe$AmperVar" format="" idxInChain="-1" inForm="true" isDefault="false" max="0.0" min="0.0" name="JWF_DESC" noSelection="false" parent="" proc="" sortFields="" sortOrder="" validate="">
+                <type class="com.ibi.wfrs.IBFSAmperVarType" name="unresolved"/>
+                <userDefValues _jt="array" itemsClass="string" size="0"/>
+                <defValues _jt="array" itemsClass="string" size="0"/>
+                <displayType class="com.ibi.wfrs.IBFSAmperDisplayType" name="prompt"/>
+                <values accessOrder="false" class="java.util.LinkedHashMap" loadFactor="0.75" threshold="0"/>
+                <parameters _jt="HashMap" loadFactor="0.75" threshold="0"/>
+            </amperVar>
+        </item>
+    </fexParameters>
 </rootObject>
