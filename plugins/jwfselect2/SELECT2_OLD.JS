@@ -17,7 +17,7 @@ Second position - another JSON with this structure:
 ////////////////////////////////////////////
 (function ($) {
     $.fn.jwfselect2 = function (options) {
-        console.log('jota')
+
         var languageJson = {
             en_US: {
                 fex_ajax: 'The variable fex_ajax is necessary',
@@ -40,18 +40,6 @@ Second position - another JSON with this structure:
                 id_select_hidden_exist: 'La variable id_select_hidden contiene un nombre erroneo. El AutoComplete no va a funcionar correctamente',
                 multiple_default: 'No es posible poner seleccion unica con mas de 1 seleccion por defecto. El AutoComplete no va a funcionar correctamente',
                 repository: 'La variable repository es necesaria'
-            },
-
-            ca_CA: {
-                fex_ajax: 'La variable fex_ajax ÃƒÂ©s necessÃƒÂ ria',
-                type_call: 'La variable type_call ÃƒÂ©s necessÃƒÂ ria',
-                id_select_plugin: 'La variable id_select_plugin ÃƒÂ©s necessÃƒÂ ria',
-                id_select_hidden: 'La variable id_select_hidden ÃƒÂ©s necessÃƒÂ ria',
-                language_error: 'La variable language ÃƒÂ©s erroni. L\'AutoComplete no funcionarÃƒÂ  correctament',
-                appstudio: 'La variable appstudio ÃƒÂ©s necessÃƒÂ ria',
-                id_select_hidden_exist: 'La variable id_select_hidden contÃƒÂ© un nom erroni. L\'AutoComplete no funcionarÃƒÂ  correctament',
-                multiple_default: 'No es pot posar seleccio unica amb mes de 1 seleccio per defecte. L\'AutoComplete no funcionarÃƒÂ  correctament',
-                repository: 'La variable repository ÃƒÂ©s necessÃƒÂ ria'
             }
         };
 
@@ -90,78 +78,15 @@ Second position - another JSON with this structure:
                 case 'es_ES':
                     auxReturn = 'es';
                     break;
-                case 'ca_CA':
-                    auxReturn = 'ca';
-                    break;
             }
             return auxReturn;
         }
-        function addOptions(options) {
-            var noExistOptions = options.filter((element) => {
-                if ($this.find('option[value="' + element.id + '"').length == 0) return true;
-                else {
-                    $this.find('option[value="' + element.id + '"').prop("selected", "selected");
-                    return false;
-                }
-            });
-            $this.append(
-                $.map(noExistOptions, function (element, i) {
-                    return $("<option>", { val: element.id, text: element.id, selected: "selected" });
-                })
-            );
-        }
-        function readInput(file) {
-            readFileContent(file)
-                .then((content) => {
-                    console.log(content);
-                    var options = content
-                        .split("\r\n")
-                        .filter((element) => element !== "")
-                        .map((s) => {
-                            var element = s.replace(/"/gi, "").trim();
-                            return { id: element, text: element };
-                        });
-                    addOptions(options);
-                    $inputField.prop("value", "");
-                    $this.trigger("change");
-                    $this.trigger("select2:close");
-                })
-                .catch((error) => console.log(error));
-        }
-        function readFileContent(file) {
-            var reader = new FileReader();
-            return new Promise((resolve, reject) => {
-                reader.onload = (event) => resolve(event.target.result);
-                reader.onerror = (error) => reject(error);
-                reader.readAsText(file);
-            });
-        }
-        function createUpload() {
-            $(this).find('.pluginSelect2').append(`<div>
-                <div class="file-upload-wrapper">
-                    <input id="input-file-${settings.id_select_plugin}" name="file-upload-field-${settings.id_select_plugin}" type="file" class="file-upload-field" value="">
-                </div>
-            </div>`)
-            var $inputField = $(this).find('#input-file-' + settings.id_select_plugin);
-            $inputField.on('change', function (event) {
-                var input = event.target;
-                if ("files" in input && input.files.length > 0) {
-                    readInput(input.files[0]);
-                }
-            });
-        }
+
         var settings = $.extend(true, {}, $.fn.jwfselect2.defaults, options);
-        $(this).append(`<div class=pluginSelect2 style="display:flex;width:100%;align-items:stretch"><div style="flex-grow: 1;"><select multiple="${settings.multiple}" id="${settings.id_select_plugin}" class="js-example-tags ${settings.class_select_plugin}" style="width:100%;"></select></div></div>`);
-
-        if (settings.upLoadFile) createUpload()
-
-
+        $(this).append('<select multiple="' + settings.multiple + '" id="' + settings.id_select_plugin + '" class="js-example-tags ' + settings.class_select_plugin + '" style="width:100%;"></select>');
         var $this = $(this).find('#' + settings.id_select_plugin);
 
-
         var select2Language = decodeLanguageSelect2(settings.language);
-        var last_load_id = null;
-        var tooltip = null;
         //default selection
 
         $.each(settings.defaultSelected, function (index, key) {
@@ -176,10 +101,17 @@ Second position - another JSON with this structure:
         var init = function () {
             $this.select2({
                 //Title for the searchable textbox
-                placeholder: settings.placeholder,
+                placeholder: settings.title,
                 multiple: settings.multiple,
                 allowClear: settings.allowClear,
                 language: select2Language,
+                templateResult: function (_option) {
+                    var _return;
+                    if (!_option.id) return _option.text;
+                    if (settings.templateResult != false) _return = settings.templateResult(_option);
+                    else _return = _option.text;
+                    return _return;
+                },
                 // Ajax call for the Search Results procedure
                 ajax: {
                     url: settings.begining_call[settings.type_call],
@@ -187,7 +119,9 @@ Second position - another JSON with this structure:
                     delay: settings.delay,
                     type: settings.callMethod,
                     data: function (params) {
-                        var term = (typeof params.term != 'undefined') ? params.term.toUpperCase() : '';
+                        //						console.log("ajax")
+                        //						console.log(params)
+                        var term = (typeof params.term !== 'undefined') ? params.term.toUpperCase() : '';
                         //different behaviour, if edaserve or content.
                         if (settings.type_call == 'edaserve') {
                             var jsonData = {
@@ -208,19 +142,31 @@ Second position - another JSON with this structure:
                                 INPUT: term
                             };
                         }
+
+                        if (settings.JWF_MAST != null) jsonData['JWF_MAST'] = settings.JWF_MAST;
+                        if (settings.JWF_COD != null) jsonData['JWF_COD'] = settings.JWF_COD;
+                        if (settings.JWF_COD_IS_NUM != null) jsonData['JWF_COD_IS_NUM'] = settings.JWF_COD_IS_NUM;
+                        if (settings.JWF_DESC != null) jsonData['JWF_DESC'] = settings.JWF_DESC;
+                        if (settings.JWF_PROPS != null) jsonData['JWF_PROPS'] = settings.JWF_PROPS;
+                        if (settings.ORDER_BY != null) jsonData['ORDER_BY'] = settings.ORDER_BY;
+
+                        if (settings.debugMode == true) jsonData['DEBUG_MODE'] = 'TRUE';
+
                         // Control for last_load (page control, and re-execute Search Results procedure)
-                        if (typeof params.page != 'undefined') {
+                        if (typeof params.page !== 'undefined') {
                             jsonData['PAGE'] = params.page;
                         } else {
                             settings.last_load = null;
-                            last_load_id = null;
-                            tooltip = null;
+                            settings.last_load_id = null;
+                            settings.last_peso = null;
+                            settings.tooltip = null;
                             $('#select2-' + $this.attr('id') + '-results li').not('#select2-' + $this.attr('id') + '-results li.loading-results').remove();
                         }
-                        if (settings.last_load) {
+                        if (typeof settings.last_load !== null) {
                             jsonData['LAST_LOAD'] = settings.last_load;
-                            jsonData['LAST_LOAD_ID'] = last_load_id;
-                            jsonData['TOOLTIP'] = tooltip;
+                            jsonData['LAST_LOAD_ID'] = settings.last_load_id;
+                            if (typeof settings.last_peso !== null) jsonData['LAST_PESO'] = settings.last_peso;
+                            jsonData['TOOLTIP'] = settings.tooltip;
 
                         }
                         if (settings.addParamsStatic) {
@@ -230,7 +176,7 @@ Second position - another JSON with this structure:
                         }
 
                         // add token
-                        if (WFGlobals) {
+                        if (window['WFGlobals']) {
                             if (WFGlobals.getSesAuthParm()) {
                                 jsonData[WFGlobals.getSesAuthParm()] = WFGlobals.getSesAuthVal();
                             }
@@ -242,7 +188,7 @@ Second position - another JSON with this structure:
 
                         if (settings.addParamsDynamic) {
                             auxJson = settings.addParamsDynamic();
-                            if (typeof auxJson == 'object') {
+                            if (typeof auxJson === 'object') {
                                 $.each(auxJson, function (index, data) {
                                     jsonData[index] = data;
                                 });
@@ -251,56 +197,53 @@ Second position - another JSON with this structure:
                         return jsonData;
                         // If everything OK, goes to processResults
                     }, processResults: function (data, params) {
-
-                        var myResults = [], tot_lines = 0;
-                        //jota
-                        if (params.page === undefined) {
-                            this.$element.select2('data').forEach(function (selectedElement, index) {
-                                if (params.term === undefined) {
-                                    myResults.push({
-                                        'id': selectedElement.id,
-                                        'text': selectedElement.text,
-                                        'title': selectedElement.title,
-                                    });
-                                } else {
-                                    if (selectedElement.text.indexOf(params.term.toUpperCase()) != -1) {
-                                        myResults.push({
-                                            'id': selectedElement.id,
-                                            'text': selectedElement.text,
-                                            'title': selectedElement.title,
-                                        });
-                                    }
-                                }
-                            })
+                        var _optJson,
+                            _arrProps;
+                        //						console.log("processResults: ")
+                        //						console.log(params)
+                        var myResults = [],
+                            tot_lines = 0;
+                        if ((settings.firstOptSearch == true) && (typeof params.term !== "undefined") && (typeof params.page === 'undefined')) {
+                            myResults.push({
+                                'id': params.term,
+                                'text': 'Ver todos los resultados de "' + params.term + '"',
+                                'title': params.term,
+                                'firstOption': true
+                            });
                         }
+
                         $.each(data.records, function (index, item) {
-                            if (index == 0) {
-                                tot_lines = item.TOT_LINES;
-                            }
+                            if (index == 0) tot_lines = item.TOT_LINES;
 
                             var elem = document.createElement('textarea');
                             elem.innerHTML = item.DESC;
                             var decoded = elem.value;
                             var my_tooltip = decoded;
-                            if (item.TOOLTIP != undefined) {
+                            if (typeof item.TOOLTIP !== "undefined") {
                                 var elem2 = document.createElement('textarea');
                                 elem2.innerHTML = item.TOOLTIP;
                                 my_tooltip = elem2.value;
                             }
-                            myResults.push({
+                            _optJson = {
                                 'id': item.COD,
                                 'text': decoded,
                                 'title': my_tooltip
-                            });
+                            };
 
+                            if (settings.JWF_PROPS != null) {
+                                _arrProps = settings.JWF_PROPS.split(',');
+                                for (var i = 0; i < _arrProps.length; i++) {
+                                    _optJson[_arrProps[i]] = item[_arrProps[i]];
+                                }
+                            }
+                            myResults.push(_optJson);
 
-                            last_load_id = item.COD;
+                            settings.last_load_id = item.COD;
                             settings.last_load = decoded;
+                            if (typeof item.PESO !== "undefined") settings.last_peso = item.PESO;
                             tooltip = my_tooltip;
                         });
-                        if (settings.onRequestLoad) {
-                            settings.onRequestLoad.call(this);
-                        }
+                        if (settings.onRequestLoad) settings.onRequestLoad.call(this);
                         params.page = params.page || 1;
                         return {
                             results: myResults,
@@ -308,21 +251,18 @@ Second position - another JSON with this structure:
                                 more: (params.page * settings.num_lines) < tot_lines
                                 //                        more:true
                             }
-
                         };
-
-                    }, cache: settings.cache
-                }, minimumInputLength: 0
+                        //					},beforeSend : function(xhr) {
+                        //						xhr.overrideMimeType('text/html; charset=iso-8859-15');
+                    },
+                    cache: settings.cache
+                },
+                minimumInputLength: settings.minimumInputLength
             }).on("change", function (e) {
                 settings.last_load = null;
-                last_load_id = null;
-                tooltip = null;
-            }).on("select2:close", function (e) {
-                if (settings.onClose) settings.onClose(e);
-            }).on('select2:opening', function (e) {
-
-                var a = $(this).data().select2.dropdown.$dropdown;
-                $(a).find('.select2-results__option').not('.loading-results').remove()
+                settings.last_load_id = null;
+                settings.last_peso = null;
+                settings.tooltip = null;
             });
 
         };
@@ -406,7 +346,6 @@ Second position - another JSON with this structure:
                 settings.onCompleteLoad.call(this);
             }
 
-
         });
 
     };
@@ -417,18 +356,18 @@ Second position - another JSON with this structure:
         class_select_plugin: '',
         id_select_hidden: null,
         defaultSelected: {},
+        minimumInputLength: 0,
         multiple: true,
-        upLoadFile: false,
+        allowClear: false,
+        firstOptSearch: false,
+        templateResult: false,
         cache: true,
         callMethod: 'POST',
         onCompleteLoad: null,
         onChange: null,
-        onClose: null,
         onRequestLoad: null,
         sortOrder: 'DESC',
         title: '',
-        placeholder: '',
-        allowClear: false,
         delay: 250,
         addParamsStatic: null,
         addParamsDynamic: null,
@@ -445,6 +384,13 @@ Second position - another JSON with this structure:
         language: 'en_US',
         lang_folder: '/approot/jwfselect2/js/i18n/',
         fex_ajax: null,
-        repository: null
+        repository: null,
+        JWF_MAST: null,
+        JWF_COD: null,
+        JWF_COD_IS_NUM: null,
+        JWF_DESC: null,
+        JWF_PROPS: null,
+        ORDER_BY: null,
+        debugMode: false
     };
 }(jQuery));

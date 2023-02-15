@@ -681,6 +681,7 @@
 			$pd.utils.getComponents(arrayComponents, arguments[arguments.length - 1]);
 		},
 		createJwfSelect2: function (options) {
+			debugger
 			var _defaults = {
 				id: null,
 				target_text: null,
@@ -695,6 +696,7 @@
 				language: 'en_US',
 				num_lines: 15,
 				multiple: true,
+				upLoadFile: false,
 				allowClear: false,
 				query_config: {},
 				onChange: function () { },
@@ -730,10 +732,12 @@
 				defaultSelected: settings.defaultSelected,
 				repository: settings.repository,
 				bip_run: 'BIP_LAUNCH',
+
 				language: settings.language,
 				lang_folder: '/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_LAUNCH&BIP_folder=IBFS:/WFC/Repository/public/plugins/jwfselect2/select2/i18n/&BIP_item=',
 				num_lines: settings.num_lines,
 				multiple: settings.multiple,
+				upLoadFile: settings.upLoadFile,
 				onChange: function () {
 					settings.onChange();
 					var terms = $('#' + settings.id + ' option:selected');
